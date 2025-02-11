@@ -193,7 +193,7 @@ if __name__ == "__main__":
     print("\n[+] Starting scan...")
     # 
     for target in targets:
-        scan_target(target, ports, portArgument, open_hosts, closed_hosts, filtered_hosts)
+        scan_target(target, ports, open_hosts, closed_hosts, filtered_hosts, portArgument)
 
     print("\n[+]Final Scan Summary:")
     if ("open" in show):
