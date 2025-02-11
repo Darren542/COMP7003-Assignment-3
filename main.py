@@ -61,6 +61,12 @@ def syn_scan(target, port):
     response = send(packet, verbose=False)
     print(f"Response: {response}")
 
+    # Send a RST packet to close the connection
+    rst = TCP(dport=port, flags="R")
+    reponse2 = send(ip / rst, verbose=False)
+    print(f"Response2: {reponse2}")
+
+
     # Analyze the response to determine the port status
     if response is None:
         return "filtered"  # No response received
