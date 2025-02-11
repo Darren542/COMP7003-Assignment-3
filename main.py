@@ -66,16 +66,18 @@ def syn_scan(target, port):
     rst = TCP(dport=port, flags="R")
     # reponse2 = send(ip / rst, verbose=False)
     response2 = sr1(ip / rst, timeout=1, verbose=False)
-    print(f"Response2: {reponse2}")
+    print(f"Response2: {response2}")
 
 
     # Analyze the response to determine the port status
-    if response is None:
+    if response is None and response2 is None:
         return "filtered"  # No response received
     elif response.haslayer(TCP):
         if response[TCP].flags == 0x12:  # SYN-ACK
             return "open"
         elif response[TCP].flags == 0x14:  # RST
+    elif response.haslayer(TCP)
+        if response[TCP].flags == 0x014
             return "closed"
     else:
         print("Response not recognized")
