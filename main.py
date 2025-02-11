@@ -77,7 +77,7 @@ def syn_scan(target, port):
             return "open"
         # elif response[TCP].flags == 0x14:  # RST
     elif response2.haslayer(TCP):
-        if response[TCP].flags == 0x014
+        if response[TCP].flags == 0x014:
             return "closed"
     else:
         print("Response not recognized")
