@@ -59,6 +59,7 @@ def syn_scan(target, port):
 
     # Send the packet and receive the response
     response = send(packet, verbose=False)
+    print(f"Response: {response}")
 
     # Analyze the response to determine the port status
     if response is None:
