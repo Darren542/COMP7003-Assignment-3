@@ -75,8 +75,8 @@ def syn_scan(target, port):
     elif response.haslayer(TCP):
         if response[TCP].flags == 0x12:  # SYN-ACK
             return "open"
-        elif response[TCP].flags == 0x14:  # RST
-    elif response.haslayer(TCP)
+        # elif response[TCP].flags == 0x14:  # RST
+    elif response2.haslayer(TCP)
         if response[TCP].flags == 0x014
             return "closed"
     else:
