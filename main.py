@@ -58,12 +58,14 @@ def syn_scan(target, port):
     packet = ip / syn
 
     # Send the packet and receive the response
-    response = send(packet, verbose=False)
+    # response = send(packet, verbose=False)
+    response = sr1(packet, timeout=1, verbose=False)
     print(f"Response: {response}")
 
     # Send a RST packet to close the connection
     rst = TCP(dport=port, flags="R")
-    reponse2 = send(ip / rst, verbose=False)
+    # reponse2 = send(ip / rst, verbose=False)
+    response2 = sr1(ip / rst, timeout=1, verbose=False)
     print(f"Response2: {reponse2}")
 
 
