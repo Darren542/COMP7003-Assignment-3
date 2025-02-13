@@ -121,7 +121,7 @@ def parse_arguments():
         print(f"[*] No target specified. Using local subnet: {args.target}")
 
     targets = args.target
-    print(targets)
+    # print(targets)
     if len(targets) == 0:
         targets = [get_local_subnet()]
     # Check for subnet notation
@@ -193,9 +193,9 @@ if __name__ == "__main__":
     closed_hosts = []
     filtered_hosts = []
 
-    print(f"Targets: {targets}")
-    print(f"Ports: {ports}")
-    print(f"Show: {show}")
+    # print(f"Targets: {targets}")
+    # print(f"Ports: {ports}")
+    # print(f"Show: {show}")
 
     print("\n[+] Starting scan...")
     # 
