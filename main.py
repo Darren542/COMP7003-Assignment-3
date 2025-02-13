@@ -67,12 +67,12 @@ def syn_scan(target, port):
     elif response and response.haslayer(TCP):
         if response[TCP].flags == 0x12:  # SYN-ACK
             # Send a RST packet to close the connection
-            print(f"Port {port} is open")
+            # print(f"Port {port} is open")
             rst = TCP(dport=port, flags="R")
             send(ip / rst, verbose=False)
             return "open"
         elif response[TCP].flags == 0x14:  # RST
-            print(f"Port {port} is closed")
+            # print(f"Port {port} is closed")
             return "closed"
     else:
         print("Response not recognized")
@@ -117,8 +117,8 @@ def parse_arguments():
 
     # Target parsing (supporting single IP, range, subnet)
     if not args.target:
-        # args.target = get_local_subnet()
-        print(f"[*] No target specified. Using local subnet: TODO")
+        args.target = get_local_subnet()
+        print(f"[*] No target specified. Using local subnet: {args.target}")
 
     targets = args.target
     print(targets)
