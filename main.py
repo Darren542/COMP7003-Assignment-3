@@ -59,25 +59,20 @@ def syn_scan(target, port):
 
     # Send the packet and receive the response
     # response = send(packet, verbose=False)
-    response = sr1(packet, timeout=1, verbose=False)
-    print(f"Response: {response}")
-
-    # Send a RST packet to close the connection
-    rst = TCP(dport=port, flags="R")
-    # reponse2 = send(ip / rst, verbose=False)
-    response2 = sr1(ip / rst, timeout=1, verbose=False)
-    print(f"Response2: {response2}")
-
+    response = sr1(packet, timeout=1, verbose=False) # sr1 waits for a single response
 
     # Analyze the response to determine the port status
-    if response is None and response2 is None:
+    if response is None:
         return "filtered"  # No response received
-    elif response.haslayer(TCP):
+    elif response and response.haslayer(TCP):
         if response[TCP].flags == 0x12:  # SYN-ACK
+            # Send a RST packet to close the connection
+            print(f"Port {port} is open")
+            rst = TCP(dport=port, flags="R")
+            send(ip / rst, verbose=False)
             return "open"
-        # elif response[TCP].flags == 0x14:  # RST
-    elif response2.haslayer(TCP):
-        if response[TCP].flags == 0x014:
+        elif response[TCP].flags == 0x14:  # RST
+            print(f"Port {port} is closed")
             return "closed"
     else:
         print("Response not recognized")
@@ -96,8 +91,9 @@ def scan_target(target, ports, open_hosts, closed_hosts, filtered_hosts, portArg
     print(f"[+] Scanning {target} on port(s) {portArgument}...")
 
     if not is_host_online(target):
-        print(f"[-] {target} is unreachable. Skipping...")
-        return
+        # print(f"[-] {target} is unreachable. Skipping...")
+        print(f"[-] {target} is unreachable. Trying anyways...")
+        # return
 
     for port in ports:
         print(f"[+] Scanning {target}:{port}...")
