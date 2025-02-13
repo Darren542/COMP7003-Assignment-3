@@ -3,7 +3,7 @@ import socket
 import subprocess
 import re
 from scapy.all import *
-from netaddr import IPNetwork, IPRange  # Ensure netaddr is installed
+from netaddr import IPNetwork, IPRange, IPAddress, AddrFormatError  # Ensure netaddr is installed
 
 # Function to detect local subnet (if no target is provided)
 def get_local_subnet():
@@ -75,7 +75,7 @@ def syn_scan(target, port):
             # print(f"Port {port} is closed")
             return "closed"
     else:
-        print("Response not recognized")
+        print("[!] Response does not have TCP layer and is not recognized")
     return "filtered"  # Placeholder (assume all ports are filtered)
 
 # Function to scan a given target on specified ports
@@ -126,7 +126,11 @@ def parse_arguments():
         targets = [get_local_subnet()]
     # Check for subnet notation
     elif "/" in targets:
-        targets = [str(ip) for ip in IPNetwork(targets)]
+        try:
+            targets = [str(ip) for ip in IPNetwork(targets)]
+        except Exception as e:
+            print(f"Invalid subnet: {e}")
+            exit(1)
     # Check for range of IPs
     elif "-" in targets:
         target_parts = targets.split("-")
@@ -134,15 +138,30 @@ def parse_arguments():
             # Range of IPs
             start_ip = target_parts[0]
             end_ip = target_parts[1]
-            targets = [str(ip) for ip in IPRange(start_ip, end_ip)]
+            try:
+                targets = [str(ip) for ip in IPRange(start_ip, end_ip)]
+            except Exception as e:
+                print(f"Invalid IP range: {e}")
+                exit(1)
     # Single IP
     else:
-        targets = [targets]
-    print(f"[*] Targets: {targets}")
+        # Make sure the single target is a valid IP address
+        try:
+            print(targets)
+            ip = IPAddress(targets.strip())
+            
+            targets = [str(ip)]
+        except AddrFormatError:
+            print(f"[!] Invalid IP address: {targets}")
+            exit(1)
+        except:
+            print(f"[!] Problem getting IP address: {targets}")
+            exit(1)
+    # print(f"[*] Targets: {targets}")
 
 
     # Port parsing (supporting single ports, ranges, lists)
-    print(args.ports)
+    # print(args.ports)
     if not args.ports:
         print(f"[*] No ports specified. Scanning All 65535 Ports")
         ports = list(range(1, 65536))
@@ -161,6 +180,7 @@ def parse_arguments():
             else:
                 ports.append(int(port))
     ports = list(set(ports))
+    ports.sort()
 
 
 
@@ -197,7 +217,7 @@ if __name__ == "__main__":
     # print(f"Ports: {ports}")
     # print(f"Show: {show}")
 
-    print("\n[+] Starting scan...")
+    print("\n[+] Starting scan of targets(s)...")
     # 
     for target in targets:
         scan_target(target, ports, open_hosts, closed_hosts, filtered_hosts, portArgument)
